@@ -1,0 +1,5 @@
+# Flask web framework
+Flask==2.3.3
+
+# Google Gemini AI SDK
+google-genai==0.3.0

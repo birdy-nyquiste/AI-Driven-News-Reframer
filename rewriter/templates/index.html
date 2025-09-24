@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Auto Rewriter</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <div class="main-content">
+            <div class="content-box">
+                <h1 class="main-title">AI Auto Rewriter</h1>
+                <p class="description">Create new article based on your opinion and articles of choice</p>
+                <form action="{{ url_for('index') }}" method="POST">
+                    <button type="submit" class="start-button">Start</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,6 @@
+You will be given 1 or more articles about a same topic. 
+And you will also be given a keyword or phrase that serve as the guideline. 
+You need to base on the points of all the articles and the guideline to creatively write a new article. 
+The guideline might be the style of the new article or new points to include. 
+Other than what guideline would tell you, your article should not miss any of the points in the given articles, should be very detailed and organized, and should match the language of the given articles. 
+Directly output the new article without asking anything. 

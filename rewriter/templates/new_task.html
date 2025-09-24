@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Auto Rewriter</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">Creat Your Auto Rewriting Task</h1>
+        </div>
+
+        <div class="main-content">
+            <div class="content-box">
+
+                <!--调试用Flash Messages-->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                    <div class="flash-message flash-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% endwith %}
+
+                <h2 class="main-title">Title</h2>
+                <form action="{{ url_for('task.new_task') }}" method="POST">
+                    <input type="hidden" name="action" value="set_title">
+                    <div class="input-group">
+                        <input type="text" name="title" class="title-input" placeholder="Your task title"
+                            value="{{ task.title }}" required>
+                        <button type="submit" class="start-button" style="margin-top: 10px;">Save Title</button>
+                    </div>
+                </form>
+
+                <!-- Articles Section -->
+                <div class="articles-section">
+                    <h3 class="section-title">Articles {% if task.articles|length > 0 %}({{ task.articles|length }}){%
+                        endif %}</h3>
+
+                    <!-- List of added articles -->
+                    <div class="articles-list">
+                        {% if task.articles %}
+                        {% for article in task.articles %}
+                        <div class="article-item">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span>{{ article.filename }} ({{ article.source }}): {{ article.preview }}</span>
+                                <a href="{{ url_for('task.remove_article', article_id=article.id) }}" 
+                                   style="color: #ff4444; text-decoration: none; font-size: 12px; padding: 5px 10px; border: 1px solid #ff4444; border-radius: 4px;"
+                                   onclick="return confirm('Are you sure you want to remove this article?')">Remove</a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% else %}
+                        <div class="empty-state">No articles added yet. Click "Add article" to get started.</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                        <form action="{{ url_for('task.new_task') }}" method="POST" style="display: inline;">
+                            <input type="hidden" name="action" value="add_article">
+                            <button type="submit" class="start-button add-article-btn">Add article</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Instructions Section -->
+                <div class="articles-section">
+                    <h3 class="section-title">Instruction</h3>
+
+                    <!-- List of added instruction -->
+                    <div class="articles-list">
+                        {% if task.instruction %}
+                        <div class="article-item">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span>Instruction: {{ task.instruction }}</span>
+                                <div style="display: flex; gap: 5px;">
+                                    <form action="{{ url_for('task.new_task') }}" method="POST" style="display: inline;">
+                                        <input type="hidden" name="action" value="add_instruction">
+                                        <button type="submit" style="color: #e67e7e; text-decoration: none; font-size: 12px; padding: 5px 10px; border: 1px solid #e67e7e; border-radius: 4px; background: white; cursor: pointer;">Edit</button>
+                                    </form>
+                                    <a href="{{ url_for('task.delete_instruction') }}" 
+                                       style="color: #ff4444; text-decoration: none; font-size: 12px; padding: 5px 10px; border: 1px solid #ff4444; border-radius: 4px;"
+                                       onclick="return confirm('Are you sure you want to delete this instruction?')">Delete</a>
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="empty-state">No instruction added yet. Click "Add instruction" to provide rewriting guidance.</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                        {% if not task.instruction %}
+                        <form action="{{ url_for('task.new_task') }}" method="POST" style="display: inline;">
+                            <input type="hidden" name="action" value="add_instruction">
+                            <button type="submit" class="start-button add-instruction-btn">Add instruction</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Create Task Button (show when ready) -->
+                {% if task.title and task.articles %}
+                <div class="submit-section">
+                    <form action="{{ url_for('task.new_task') }}" method="POST">
+                        <input type="hidden" name="action" value="create_task">
+                        <button type="submit" class="start-button">Create Task</button>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Article - AI Auto Rewriter</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .input-method-selector {
+            margin-bottom: 30px;
+        }
+
+        .method-tabs {
+            display: flex;
+            border-bottom: 2px solid #e67e7e;
+            margin-bottom: 20px;
+        }
+
+        .method-tab {
+            flex: 1;
+            padding: 15px;
+            background: none;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #666;
+        }
+
+        .method-tab.active {
+            background-color: #e67e7e;
+            color: white;
+        }
+
+        .method-tab:hover {
+            background-color: rgba(230, 126, 126, 0.1);
+        }
+
+        .input-content {
+            display: none;
+        }
+
+        .input-content.active {
+            display: block;
+        }
+
+        .text-input-area {
+            width: 100%;
+            min-height: 300px;
+            padding: 15px;
+            border: 2px solid #e67e7e;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 14px;
+            resize: vertical;
+        }
+
+        .text-input-area:focus {
+            outline: none;
+            border-color: #d65555;
+            box-shadow: 0 0 10px rgba(230, 126, 126, 0.3);
+        }
+
+        .file-upload-area {
+            border: 2px dashed #e67e7e;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload-area:hover {
+            border-color: #d65555;
+            background-color: rgba(230, 126, 126, 0.05);
+        }
+
+        .file-upload-area.dragover {
+            border-color: #d65555;
+            background-color: rgba(230, 126, 126, 0.1);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-upload-button {
+            background-color: #e67e7e;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .file-upload-button:hover {
+            background-color: #d65555;
+        }
+
+        .file-info {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .back-button {
+            background-color: #ccc;
+            color: #333;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-right: 10px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .back-button:hover {
+            background-color: #bbb;
+        }
+
+        .button-group {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">Add Article</h1>
+        </div>
+
+        <div class="main-content">
+            <div class="content-box">
+                <!-- Flash Messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                    <div class="flash-message flash-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% endwith %}
+
+                <div class="input-method-selector">
+                    <div class="method-tabs">
+                        <button class="method-tab active" onclick="switchTab('text')">Paste Text</button>
+                        <button class="method-tab" onclick="switchTab('pdf')">Upload PDF</button>
+                    </div>
+
+                    <!-- Text Input Method -->
+                    <div id="text-content" class="input-content active">
+                        <p style="margin-bottom: 15px; color: #666;">Your text will be saved as a text file for processing.</p>
+                        <form action="{{ url_for('task.add_article') }}" method="POST">
+                            <input type="hidden" name="input_type" value="text">
+                            <textarea name="article_text" class="text-input-area" 
+                                placeholder="Enter your article text here..."></textarea>
+                            <div class="button-group">
+                                <a href="{{ url_for('task.new_task') }}" class="back-button">Back</a>
+                                <button type="submit" class="start-button">Add Article</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- PDF Upload Method -->
+                    <div id="pdf-content" class="input-content">
+                        <form action="{{ url_for('task.add_article') }}" method="POST" enctype="multipart/form-data">
+                            <input type="hidden" name="input_type" value="pdf">
+                            <div class="file-upload-area" onclick="document.getElementById('pdf-file').click()">
+                                <button type="button" class="file-upload-button">Choose PDF File</button>
+                                <div class="file-info">
+                                    <p>Click to select a PDF file or drag and drop here</p>
+                                    <p><small>Supported format: PDF (max 16MB)</small></p>
+                                </div>
+                                <input type="file" id="pdf-file" name="pdf_file" class="file-input" 
+                                       accept=".pdf" onchange="updateFileName(this)">
+                                <div id="selected-file" style="margin-top: 10px; font-weight: bold;"></div>
+                            </div>
+                            <div class="button-group">
+                                <a href="{{ url_for('task.new_task') }}" class="back-button">Back</a>
+                                <button type="submit" class="start-button">Add Article</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabName) {
+            // Hide all content
+            document.querySelectorAll('.input-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.method-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected content and activate tab
+            document.getElementById(tabName + '-content').classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function updateFileName(input) {
+            const fileDiv = document.getElementById('selected-file');
+            if (input.files.length > 0) {
+                fileDiv.textContent = 'Selected: ' + input.files[0].name;
+                fileDiv.style.color = '#e67e7e';
+            } else {
+                fileDiv.textContent = '';
+            }
+        }
+
+        // Drag and drop functionality
+        const uploadArea = document.querySelector('.file-upload-area');
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0 && files[0].type === 'application/pdf') {
+                const fileInput = document.getElementById('pdf-file');
+                fileInput.files = files;
+                updateFileName(fileInput);
+            }
+        });
+    </script>
+</body>
+
+</html>

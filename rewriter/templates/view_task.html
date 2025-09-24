@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ task.title }} - AI Auto Rewriter</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .task-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .task-title {
+            font-size: 28px;
+            color: #e67e7e;
+            margin-bottom: 10px;
+            font-weight: 400;
+        }
+
+        .task-info {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .status-section {
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-pending {
+            background-color: rgba(255, 193, 7, 0.2);
+            color: #F57C00;
+            border: 1px solid #FFC107;
+        }
+
+        .status-processing {
+            background-color: rgba(33, 150, 243, 0.2);
+            color: #1976D2;
+            border: 1px solid #2196F3;
+        }
+
+        .status-completed {
+            background-color: rgba(76, 175, 80, 0.2);
+            color: #388E3C;
+            border: 1px solid #4CAF50;
+        }
+
+        .status-failed {
+            background-color: rgba(244, 67, 54, 0.2);
+            color: #D32F2F;
+            border: 1px solid #F44336;
+        }
+
+        .processing-message {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: rgba(33, 150, 243, 0.1);
+            border-left: 4px solid #2196F3;
+            border-radius: 4px;
+        }
+
+        .result-section {
+            margin-top: 40px;
+        }
+
+        .result-textarea {
+            width: 100%;
+            min-height: 400px;
+            padding: 20px;
+            border: 2px solid #e67e7e;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 14px;
+            line-height: 1.6;
+            resize: vertical;
+            background-color: #faf9f6;
+        }
+
+        .result-textarea:focus {
+            outline: none;
+            border-color: #d65555;
+            box-shadow: 0 0 10px rgba(230, 126, 126, 0.3);
+        }
+
+        .task-summary {
+            background-color: #f9f9f9;
+            border: 1px solid #e67e7e;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .summary-item {
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .summary-label {
+            font-weight: 500;
+            color: #e67e7e;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .back-button {
+            background-color: #ccc;
+            color: #333;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+        }
+
+        .back-button:hover {
+            background-color: #bbb;
+        }
+
+        .process-button {
+            background-color: #e67e7e;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .process-button:hover {
+            background-color: #d65555;
+        }
+
+        .process-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #2196F3;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .auto-refresh {
+            font-size: 12px;
+            color: #666;
+            margin-top: 10px;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">Task Details</h1>
+        </div>
+
+        <div class="main-content">
+            <div class="content-box">
+                <!-- Flash Messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                    <div class="flash-message flash-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% endwith %}
+
+                <!-- Task Header -->
+                <div class="task-header">
+                    <h2 class="task-title">{{ task.title }}</h2>
+                    <div class="task-info">
+                        Articles: {{ task.articles|length }} | 
+                        Instruction: {{ "Yes" if task.instruction else "No" }}
+                    </div>
+                </div>
+
+                <!-- Task Summary -->
+                <div class="task-summary">
+                    <div class="summary-item">
+                        <span class="summary-label">Task ID:</span>
+                        <span>{{ task.task_id }}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Articles:</span>
+                        <span>{{ task.articles|length }} files</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Instruction:</span>
+                        <span>{{ task.instruction[:50] + "..." if task.instruction|length > 50 else task.instruction if task.instruction else "No instruction provided" }}</span>
+                    </div>
+                </div>
+
+                <!-- Status Section -->
+                <div class="status-section">
+                    <div class="status-badge status-{{ task.status }}">
+                        {% if task.status == 'processing' %}
+                        <span class="spinner"></span>
+                        {% endif %}
+                        {{ task.status.title() }}
+                    </div>
+
+                    {% if task.status == 'pending' %}
+                    <div class="processing-message">
+                        <p><strong>Ready to Process</strong></p>
+                        <p>Your task is ready. Click "Start Processing" to begin rewriting your articles using Google Gemini AI.</p>
+                    </div>
+                    {% elif task.status == 'processing' %}
+                    <div class="processing-message">
+                        <p><strong>Processing in Progress...</strong></p>
+                        <p>Your articles are being processed by Google Gemini AI. This may take a few moments.</p>
+                        <div class="auto-refresh">This page will automatically refresh every 5 seconds.</div>
+                    </div>
+                    {% elif task.status == 'failed' %}
+                    <div class="processing-message" style="background-color: rgba(244, 67, 54, 0.1); border-left-color: #F44336;">
+                        <p><strong>Processing Failed</strong></p>
+                        <p>{{ task.result if task.result else "An error occurred while processing your task." }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Result Section -->
+                {% if task.status == 'completed' and task.result %}
+                <div class="result-section">
+                    <h3 class="section-title">Generated Article</h3>
+                    <textarea class="result-textarea" readonly>{{ task.result }}</textarea>
+                </div>
+                {% endif %}
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <a href="{{ url_for('task.new_task') }}" class="back-button">Back to Tasks</a>
+                    
+                    {% if task.status == 'pending' %}
+                    <form action="{{ url_for('task.process_task', task_id=task.task_id) }}" method="POST" style="display: inline;">
+                        <button type="submit" class="process-button">Start Processing</button>
+                    </form>
+                    {% elif task.status == 'failed' %}
+                    <form action="{{ url_for('task.process_task', task_id=task.task_id) }}" method="POST" style="display: inline;">
+                        <button type="submit" class="process-button">Retry Processing</button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auto-refresh for processing status -->
+    {% if task.status == 'processing' %}
+    <script>
+        setTimeout(function() {
+            window.location.reload();
+        }, 5000); // Refresh every 5 seconds
+    </script>
+    {% endif %}
+</body>
+
+</html>
