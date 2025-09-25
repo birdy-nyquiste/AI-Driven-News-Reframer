@@ -14,18 +14,8 @@ from typing import List, Optional, Union
 class RewritingClient:
     """Client for interacting with Google Gemini AI for article rewriting."""
 
-    def __init__(self, api_key: Optional[str] = None):
-        """Initialize the Gemini client with API key."""
-        if not api_key:
-            # Try to get from environment variable
-            api_key = os.getenv("GEMINI_API_KEY")
-            if not api_key:
-                raise ValueError(
-                    "Gemini API key is required. Set GEMINI_API_KEY environment variable or pass it directly."
-                )
-
-        # Initialize the client with the modern SDK
-        self.client = genai.Client(api_key=api_key)
+    def __init__(self):
+        self.client = genai.Client()
 
     def load_prompt_template(self, prompt_file_path: str) -> str:
         """Load the prompt template from file."""

@@ -6,178 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ task.title }} - AI Auto Rewriter</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <style>
-        .task-header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .task-title {
-            font-size: 28px;
-            color: #e67e7e;
-            margin-bottom: 10px;
-            font-weight: 400;
-        }
-
-        .task-info {
-            color: #666;
-            font-size: 16px;
-        }
-
-        .status-section {
-            margin-bottom: 40px;
-            text-align: center;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-weight: 500;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .status-pending {
-            background-color: rgba(255, 193, 7, 0.2);
-            color: #F57C00;
-            border: 1px solid #FFC107;
-        }
-
-        .status-processing {
-            background-color: rgba(33, 150, 243, 0.2);
-            color: #1976D2;
-            border: 1px solid #2196F3;
-        }
-
-        .status-completed {
-            background-color: rgba(76, 175, 80, 0.2);
-            color: #388E3C;
-            border: 1px solid #4CAF50;
-        }
-
-        .status-failed {
-            background-color: rgba(244, 67, 54, 0.2);
-            color: #D32F2F;
-            border: 1px solid #F44336;
-        }
-
-        .processing-message {
-            margin-top: 20px;
-            padding: 20px;
-            background-color: rgba(33, 150, 243, 0.1);
-            border-left: 4px solid #2196F3;
-            border-radius: 4px;
-        }
-
-        .result-section {
-            margin-top: 40px;
-        }
-
-        .result-textarea {
-            width: 100%;
-            min-height: 400px;
-            padding: 20px;
-            border: 2px solid #e67e7e;
-            border-radius: 8px;
-            font-family: inherit;
-            font-size: 14px;
-            line-height: 1.6;
-            resize: vertical;
-            background-color: #faf9f6;
-        }
-
-        .result-textarea:focus {
-            outline: none;
-            border-color: #d65555;
-            box-shadow: 0 0 10px rgba(230, 126, 126, 0.3);
-        }
-
-        .task-summary {
-            background-color: #f9f9f9;
-            border: 1px solid #e67e7e;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 30px;
-        }
-
-        .summary-item {
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .summary-label {
-            font-weight: 500;
-            color: #e67e7e;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-top: 30px;
-        }
-
-        .back-button {
-            background-color: #ccc;
-            color: #333;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-        }
-
-        .back-button:hover {
-            background-color: #bbb;
-        }
-
-        .process-button {
-            background-color: #e67e7e;
-            color: white;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .process-button:hover {
-            background-color: #d65555;
-        }
-
-        .process-button:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
-
-        .spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid #f3f3f3;
-            border-top: 2px solid #2196F3;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-right: 10px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .auto-refresh {
-            font-size: 12px;
-            color: #666;
-            margin-top: 10px;
-            font-style: italic;
-        }
-    </style>
 </head>
 
 <body>
@@ -209,44 +37,104 @@
                 </div>
 
                 <!-- Task Summary -->
-                <div class="task-summary">
+                <div class="info-box">
                     <div class="summary-item">
                         <span class="summary-label">Task ID:</span>
-                        <span>{{ task.task_id }}</span>
+                        <span class="summary-value">{{ task.task_id }}</span>
                     </div>
                     <div class="summary-item">
                         <span class="summary-label">Articles:</span>
-                        <span>{{ task.articles|length }} files</span>
+                        <span class="summary-value">{{ task.articles|length }} files</span>
                     </div>
                     <div class="summary-item">
                         <span class="summary-label">Instruction:</span>
-                        <span>{{ task.instruction[:50] + "..." if task.instruction|length > 50 else task.instruction if task.instruction else "No instruction provided" }}</span>
+                        <span class="summary-value">{{ task.instruction[:50] + "..." if task.instruction|length > 50 else task.instruction if task.instruction else "No instruction provided" }}</span>
                     </div>
                 </div>
 
                 <!-- Status Section -->
-                <div class="status-section">
-                    <div class="status-badge status-{{ task.status }}">
-                        {% if task.status == 'processing' %}
-                        <span class="spinner"></span>
-                        {% endif %}
-                        {{ task.status.title() }}
+                <div class="section">
+                    <div style="text-align: center; margin-bottom: var(--space-6);">
+                        <div class="status-badge status-{{ task.status }}">
+                            {% if task.status == 'processing' %}
+                            <span class="spinner"></span>
+                            {% endif %}
+                            {{ task.status.title() }}
+                        </div>
                     </div>
 
                     {% if task.status == 'pending' %}
-                    <div class="processing-message">
-                        <p><strong>Ready to Process</strong></p>
+                    <div class="info-box" id="pending-info">
+                        <h3>Ready to Process</h3>
                         <p>Your task is ready. Click "Start Processing" to begin rewriting your articles using Google Gemini AI.</p>
                     </div>
-                    {% elif task.status == 'processing' %}
-                    <div class="processing-message">
-                        <p><strong>Processing in Progress...</strong></p>
+                    
+                    <!-- Processing indicator (initially hidden) -->
+                    <div class="info-box" id="processing-info" style="display: none;">
+                        <h3>Processing in Progress...</h3>
                         <p>Your articles are being processed by Google Gemini AI. This may take a few moments.</p>
-                        <div class="auto-refresh">This page will automatically refresh every 5 seconds.</div>
+                        
+                        <!-- Progress bar -->
+                        <div class="progress-container">
+                            <div class="progress-bar">
+                                <div class="progress-fill indeterminate"></div>
+                            </div>
+                            <div class="progress-text">Processing articles...</div>
+                        </div>
+                        
+                        <!-- Processing steps -->
+                        <div class="processing-steps">
+                            <div class="processing-step active">
+                                <div class="step-icon active">1</div>
+                                <span>Analyzing source articles</span>
+                            </div>
+                            <div class="processing-step">
+                                <div class="step-icon pending">2</div>
+                                <span>Applying rewriting instructions</span>
+                            </div>
+                            <div class="processing-step">
+                                <div class="step-icon pending">3</div>
+                                <span>Generating final article</span>
+                            </div>
+                        </div>
+                        
+                        <p style="font-size: 0.875rem; color: var(--neutral-500); font-style: italic; margin-bottom: 0;">This page will automatically refresh every 5 seconds.</p>
+                    </div>
+                    
+                    {% elif task.status == 'processing' %}
+                    <div class="info-box">
+                        <h3>Processing in Progress...</h3>
+                        <p>Your articles are being processed by Google Gemini AI. This may take a few moments.</p>
+                        
+                        <!-- Progress bar -->
+                        <div class="progress-container">
+                            <div class="progress-bar">
+                                <div class="progress-fill indeterminate"></div>
+                            </div>
+                            <div class="progress-text">Processing articles...</div>
+                        </div>
+                        
+                        <!-- Processing steps -->
+                        <div class="processing-steps">
+                            <div class="processing-step completed">
+                                <div class="step-icon completed">✓</div>
+                                <span>Analyzing source articles</span>
+                            </div>
+                            <div class="processing-step active">
+                                <div class="step-icon active">2</div>
+                                <span>Applying rewriting instructions</span>
+                            </div>
+                            <div class="processing-step">
+                                <div class="step-icon pending">3</div>
+                                <span>Generating final article</span>
+                            </div>
+                        </div>
+                        
+                        <p style="font-size: 0.875rem; color: var(--neutral-500); font-style: italic; margin-bottom: 0;">This page will automatically refresh every 5 seconds.</p>
                     </div>
                     {% elif task.status == 'failed' %}
-                    <div class="processing-message" style="background-color: rgba(244, 67, 54, 0.1); border-left-color: #F44336;">
-                        <p><strong>Processing Failed</strong></p>
+                    <div class="info-box" style="border-left-color: var(--error-500); background-color: var(--error-50);">
+                        <h3 style="color: var(--error-600);">Processing Failed</h3>
                         <p>{{ task.result if task.result else "An error occurred while processing your task." }}</p>
                     </div>
                     {% endif %}
@@ -254,23 +142,25 @@
 
                 <!-- Result Section -->
                 {% if task.status == 'completed' and task.result %}
-                <div class="result-section">
+                <div class="section">
                     <h3 class="section-title">Generated Article</h3>
-                    <textarea class="result-textarea" readonly>{{ task.result }}</textarea>
+                    <div class="form-group">
+                        <textarea class="form-textarea" readonly rows="20" style="font-family: var(--font-family-mono); background-color: var(--neutral-50);">{{ task.result }}</textarea>
+                    </div>
                 </div>
                 {% endif %}
 
                 <!-- Action Buttons -->
                 <div class="action-buttons">
-                    <a href="{{ url_for('task.new_task') }}" class="back-button">Back to Tasks</a>
+                    <a href="{{ url_for('task.new_task') }}" class="btn btn-secondary">Back to Tasks</a>
                     
                     {% if task.status == 'pending' %}
-                    <form action="{{ url_for('task.process_task', task_id=task.task_id) }}" method="POST" style="display: inline;">
-                        <button type="submit" class="process-button">Start Processing</button>
+                    <form id="process-form" action="{{ url_for('task.process_task', task_id=task.task_id) }}" method="POST" style="display: inline;">
+                        <button type="submit" id="process-btn" class="btn btn-primary">Start Processing</button>
                     </form>
                     {% elif task.status == 'failed' %}
-                    <form action="{{ url_for('task.process_task', task_id=task.task_id) }}" method="POST" style="display: inline;">
-                        <button type="submit" class="process-button">Retry Processing</button>
+                    <form id="process-form" action="{{ url_for('task.process_task', task_id=task.task_id) }}" method="POST" style="display: inline;">
+                        <button type="submit" id="process-btn" class="btn btn-primary">Retry Processing</button>
                     </form>
                     {% endif %}
                 </div>
@@ -278,14 +168,87 @@
         </div>
     </div>
 
-    <!-- Auto-refresh for processing status -->
-    {% if task.status == 'processing' %}
+    <!-- JavaScript for immediate processing feedback -->
     <script>
+        // Handle form submission with immediate feedback
+        {% if task.status == 'pending' or task.status == 'failed' %}
+        document.getElementById('process-form').addEventListener('submit', function(e) {
+            const button = document.getElementById('process-btn');
+            const statusBadge = document.querySelector('.status-badge');
+            const pendingInfo = document.getElementById('pending-info');
+            const processingInfo = document.getElementById('processing-info');
+            
+            // Update button state
+            button.classList.add('loading');
+            button.textContent = 'Processing...';
+            
+            // Update status badge
+            statusBadge.className = 'status-badge status-processing';
+            statusBadge.innerHTML = '<span class="spinner"></span> Processing';
+            
+            // Show processing info and hide pending info
+            if (pendingInfo) pendingInfo.style.display = 'none';
+            if (processingInfo) processingInfo.style.display = 'block';
+            
+            // Animate processing steps
+            setTimeout(function() {
+                animateProcessingSteps();
+            }, 1000);
+        });
+        
+        function animateProcessingSteps() {
+            const steps = document.querySelectorAll('.processing-step');
+            const icons = document.querySelectorAll('.step-icon');
+            
+            // Simulate step progression
+            let currentStep = 0;
+            
+            const stepInterval = setInterval(function() {
+                if (currentStep < steps.length - 1) {
+                    // Mark current step as completed
+                    steps[currentStep].classList.remove('active');
+                    steps[currentStep].classList.add('completed');
+                    icons[currentStep].classList.remove('active');
+                    icons[currentStep].classList.add('completed');
+                    icons[currentStep].textContent = '✓';
+                    
+                    currentStep++;
+                    
+                    // Activate next step
+                    if (currentStep < steps.length) {
+                        steps[currentStep].classList.add('active');
+                        icons[currentStep].classList.remove('pending');
+                        icons[currentStep].classList.add('active');
+                    }
+                }
+                
+                // Update progress text
+                const progressText = document.querySelector('.progress-text');
+                if (progressText) {
+                    const messages = [
+                        'Analyzing source articles...',
+                        'Applying rewriting instructions...',
+                        'Generating final article...'
+                    ];
+                    if (currentStep < messages.length) {
+                        progressText.textContent = messages[currentStep];
+                    }
+                }
+                
+                if (currentStep >= steps.length - 1) {
+                    clearInterval(stepInterval);
+                }
+            }, 2000); // Change step every 2 seconds
+        }
+        {% endif %}
+        
+        // Auto-refresh for processing status
+        {% if task.status == 'processing' %}
         setTimeout(function() {
             window.location.reload();
         }, 5000); // Refresh every 5 seconds
+        {% endif %}
     </script>
-    {% endif %}
 </body>
 
 </html>

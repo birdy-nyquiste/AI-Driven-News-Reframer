@@ -6,64 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Instruction - AI Auto Rewriter</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <style>
-        .instruction-input-area {
-            width: 100%;
-            min-height: 200px;
-            padding: 15px;
-            border: 2px solid #e67e7e;
-            border-radius: 8px;
-            font-family: inherit;
-            font-size: 14px;
-            resize: vertical;
-            margin-bottom: 20px;
-        }
-
-        .instruction-input-area:focus {
-            outline: none;
-            border-color: #d65555;
-            box-shadow: 0 0 10px rgba(230, 126, 126, 0.3);
-        }
-
-        .back-button {
-            background-color: #ccc;
-            color: #333;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-right: 10px;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .back-button:hover {
-            background-color: #bbb;
-        }
-
-        .button-group {
-            margin-top: 30px;
-            display: flex;
-            gap: 15px;
-        }
-
-        .instruction-help {
-            background-color: #f9f9f9;
-            border-left: 4px solid #e67e7e;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 0 6px 6px 0;
-        }
-
-        .instruction-help h3 {
-            margin-top: 0;
-            color: #e67e7e;
-        }
-
-        .instruction-help ul {
-            margin-bottom: 0;
-        }
-    </style>
 </head>
 
 <body>
@@ -85,18 +27,34 @@
                 {% endif %}
                 {% endwith %}
 
-
-                <form action="{{ url_for('task.add_instruction') }}" method="POST">
-                    <textarea name="instruction_text" class="instruction-input-area"
-                        placeholder="Enter your rewriting instructions here...">{{ current_instruction if current_instruction else '' }}</textarea>
-
-                    <div class="button-group">
-                        <a href="{{ url_for('task.new_task') }}" class="back-button">Back</a>
-                        <button type="submit" class="start-button">
-                            {% if current_instruction %}Update Instruction{% else %}Add Instruction{% endif %}
-                        </button>
+                <div class="section">
+                    <h2 class="section-title">Rewriting Instructions</h2>
+                    <p class="section-description">Provide specific guidance on how you want the AI to rewrite your articles. Be as detailed as possible for better results.</p>
+                    
+                    <div class="info-box">
+                        <h3>Tips for effective instructions:</h3>
+                        <ul>
+                            <li>Specify the tone and style you want (formal, casual, academic, etc.)</li>
+                            <li>Mention the target audience</li>
+                            <li>Include any specific requirements or constraints</li>
+                            <li>Describe the desired length or format</li>
+                        </ul>
                     </div>
-                </form>
+
+                    <form action="{{ url_for('task.add_instruction') }}" method="POST">
+                        <div class="form-group">
+                            <textarea name="instruction_text" class="form-textarea" rows="8"
+                                placeholder="Enter your rewriting instructions here...">{{ current_instruction if current_instruction else '' }}</textarea>
+                        </div>
+
+                        <div class="action-buttons">
+                            <a href="{{ url_for('task.new_task') }}" class="btn btn-secondary">Back</a>
+                            <button type="submit" class="btn btn-primary">
+                                {% if current_instruction %}Update Instruction{% else %}Add Instruction{% endif %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
