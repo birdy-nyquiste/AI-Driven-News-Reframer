@@ -4,14 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Article - AI Auto Rewriter</title>
+    <title>Add Source - AI-Driven News Reframer</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
     <div class="container">
         <div class="header">
-            <h1 class="title">Add Article</h1>
+            <h1 class="title">Add Source</h1>
         </div>
 
         <div class="main-content">
@@ -35,16 +35,16 @@
 
                     <!-- Text Input Method -->
                     <div id="text-content" class="tab-content active">
-                        <p class="section-description">Your text will be saved as a text file for processing.</p>
+                        <p class="section-description">Paste your source text or a web URL below.</p>
                         <form action="{{ url_for('task.add_article') }}" method="POST">
                             <input type="hidden" name="input_type" value="text">
                             <div class="form-group">
                                 <textarea name="article_text" class="form-textarea" 
-                                    placeholder="Enter your article text here..." rows="12"></textarea>
+                                    placeholder="Enter your article text or paste a web URL here..." rows="12"></textarea>
                             </div>
                             <div class="action-buttons">
                                 <a href="{{ url_for('task.new_task') }}" class="btn btn-secondary">Back</a>
-                                <button type="submit" class="btn btn-primary">Add Article</button>
+                                <button type="submit" class="btn btn-primary">Add Source</button>
                             </div>
                         </form>
                     </div>
@@ -65,7 +65,7 @@
                             </div>
                             <div class="action-buttons">
                                 <a href="{{ url_for('task.new_task') }}" class="btn btn-secondary">Back</a>
-                                <button type="submit" class="btn btn-primary">Add Article</button>
+                                <button type="submit" class="btn btn-primary">Add Source</button>
                             </div>
                         </form>
                     </div>

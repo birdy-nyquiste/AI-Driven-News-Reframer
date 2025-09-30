@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ task.title }} - AI Auto Rewriter</title>
+    <title>{{ task.title }} - AI-Driven News Reframer</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
@@ -35,7 +35,7 @@
                 <!-- Task Summary -->
                 <div class="info-box">
                     <div class="summary-item">
-                        <span class="summary-label">Articles:</span>
+                        <span class="summary-label">Sources:</span>
                         <span class="summary-value">{{ task.articles|length }} files</span>
                     </div>
                     <div class="summary-item">
@@ -66,35 +66,35 @@
                     {% if task.status == 'pending' %}
                     <div class="info-box" id="pending-info">
                         <h3>Ready to Process</h3>
-                        <p>Your task is ready. Click "Start Processing" to begin rewriting your articles using Google Gemini AI.</p>
+                        <p>Your task is ready. Click "Start Processing" to begin rewriting your sources using Google Gemini AI.</p>
                     </div>
                     
                     <!-- Processing indicator (initially hidden) -->
                     <div class="info-box" id="processing-info" style="display: none;">
                         <h3>Processing in Progress...</h3>
-                        <p>Your articles are being processed by Google Gemini AI. This may take a few moments.</p>
+                        <p>Your sources are being processed by Google Gemini AI. This may take a few moments.</p>
                         
                         <!-- Progress bar -->
                         <div class="progress-container">
                             <div class="progress-bar">
                                 <div class="progress-fill indeterminate"></div>
                             </div>
-                            <div class="progress-text">Processing articles...</div>
+                            <div class="progress-text">Processing sources...</div>
                         </div>
                         
                         <!-- Processing steps -->
                         <div class="processing-steps">
                             <div class="processing-step active">
                                 <div class="step-icon active">1</div>
-                                <span>Analyzing source articles</span>
+                                <span>Analyzing sources</span>
                             </div>
                             <div class="processing-step">
                                 <div class="step-icon pending">2</div>
-                                <span>Applying rewriting instructions</span>
+                                <span>Applying reframing instructions</span>
                             </div>
                             <div class="processing-step">
                                 <div class="step-icon pending">3</div>
-                                <span>Generating final article</span>
+                                <span>Generating final content</span>
                             </div>
                         </div>
                         
@@ -104,29 +104,29 @@
                     {% elif task.status == 'processing' %}
                     <div class="info-box">
                         <h3>Processing in Progress...</h3>
-                        <p>Your articles are being processed by Google Gemini AI. This may take a few moments.</p>
+                        <p>Your sources are being processed by Google Gemini AI. This may take a few moments.</p>
                         
                         <!-- Progress bar -->
                         <div class="progress-container">
                             <div class="progress-bar">
                                 <div class="progress-fill indeterminate"></div>
                             </div>
-                            <div class="progress-text">Processing articles...</div>
+                            <div class="progress-text">Processing sources...</div>
                         </div>
                         
                         <!-- Processing steps -->
                         <div class="processing-steps">
                             <div class="processing-step completed">
                                 <div class="step-icon completed">✓</div>
-                                <span>Analyzing source articles</span>
+                                <span>Analyzing sources</span>
                             </div>
                             <div class="processing-step active">
                                 <div class="step-icon active">2</div>
-                                <span>Applying rewriting instructions</span>
+                                <span>Applying reframing instructions</span>
                             </div>
                             <div class="processing-step">
                                 <div class="step-icon pending">3</div>
-                                <span>Generating final article</span>
+                                <span>Generating final content</span>
                             </div>
                         </div>
                         
@@ -143,7 +143,7 @@
                 <!-- Result Section -->
                 {% if task.status == 'completed' and task.result %}
                 <div class="section">
-                    <h3 class="section-title">Generated Article</h3>
+                    <h3 class="section-title">Generated Content</h3>
                     <div class="form-group">
                         <textarea class="form-textarea" readonly rows="20" style="font-family: var(--font-family-mono); background-color: var(--neutral-50);">{{ task.result }}</textarea>
                     </div>

@@ -7,7 +7,9 @@ def create_app():
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
-        SECRET_KEY="dev",  # TODO: change to a random secret key when deploying
+        SECRET_KEY=os.environ.get(
+            "SECRET_KEY", "dev"
+        ),  # Use environment variable in production
         MAX_CONTENT_LENGTH=16 * 1024 * 1024,  # 16MB max file size
         UPLOAD_FOLDER="instance/uploads",
     )
