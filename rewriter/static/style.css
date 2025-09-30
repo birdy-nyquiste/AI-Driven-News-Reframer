@@ -539,6 +539,29 @@ body {
   margin-top: var(--space-6);
 }
 
+.action-buttons > * {
+  flex: 1;
+  min-width: 0;
+  max-width: 12rem;
+}
+
+.action-buttons .btn {
+  height: 2.75rem;
+  min-height: 2.75rem;
+  max-height: 2.75rem;
+  box-sizing: border-box;
+}
+
+.action-buttons form {
+  margin: 0;
+  padding: 0;
+  display: flex;
+}
+
+.action-buttons form .btn {
+  width: 100%;
+}
+
 /* Tab navigation */
 .tab-nav {
   display: flex;
@@ -1069,6 +1092,151 @@ body {
     flex-direction: column;
     align-items: flex-start;
     gap: var(--space-1);
+  }
+}
+
+/* Preset Instructions Styles */
+.preset-section {
+  margin-bottom: var(--space-8);
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--neutral-200);
+}
+
+.preset-title {
+  font-size: 1.125rem;
+  color: var(--neutral-900);
+  margin-bottom: var(--space-2);
+  font-weight: 600;
+}
+
+.preset-description {
+  font-size: 0.925rem;
+  color: var(--neutral-600);
+  margin-bottom: var(--space-5);
+}
+
+.preset-buttons {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.preset-button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: var(--space-5);
+  border: 2px solid var(--neutral-300);
+  border-radius: var(--radius-lg);
+  background-color: white;
+  color: var(--neutral-800);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  font-family: inherit;
+  min-height: 120px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.preset-button:hover {
+  border-color: var(--primary-400);
+  background-color: var(--primary-50);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.preset-button.selected {
+  border-color: var(--primary-600);
+  background-color: var(--primary-100);
+  box-shadow: var(--shadow-lg);
+}
+
+.preset-button.selected:hover {
+  border-color: var(--primary-700);
+  background-color: var(--primary-200);
+}
+
+.preset-button:not(.selected):not(:hover) {
+  opacity: 1;
+}
+
+/* When a preset is selected, gray out the others */
+.preset-buttons.has-selection .preset-button:not(.selected) {
+  opacity: 0.6;
+}
+
+.preset-button-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--neutral-900);
+  margin-bottom: var(--space-2);
+  line-height: 1.3;
+}
+
+.preset-button.selected .preset-button-title {
+  color: var(--primary-700);
+}
+
+.preset-button-description {
+  font-size: 0.925rem;
+  color: var(--neutral-600);
+  line-height: 1.4;
+  flex: 1;
+}
+
+.preset-button.selected .preset-button-description {
+  color: var(--primary-600);
+}
+
+/* Custom Section Styles */
+.custom-section {
+  margin-top: var(--space-6);
+}
+
+.custom-title {
+  font-size: 1.125rem;
+  color: var(--neutral-900);
+  margin-bottom: var(--space-2);
+  font-weight: 600;
+}
+
+.custom-description {
+  font-size: 0.925rem;
+  color: var(--neutral-600);
+  margin-bottom: var(--space-4);
+}
+
+/* Disabled textarea styles */
+.form-group.disabled .form-textarea {
+  opacity: 0.5;
+  background-color: var(--neutral-100);
+  border-color: var(--neutral-200);
+  cursor: not-allowed;
+}
+
+.form-group.disabled .form-textarea::placeholder {
+  color: var(--neutral-300);
+}
+
+/* Responsive adjustments for presets */
+@media (max-width: 768px) {
+  .preset-buttons {
+    grid-template-columns: 1fr;
+  }
+  
+  .preset-button {
+    min-height: 100px;
+    padding: var(--space-4);
+  }
+  
+  .preset-button-title {
+    font-size: 1rem;
+  }
+  
+  .preset-button-description {
+    font-size: 0.875rem;
   }
 }
 

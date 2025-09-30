@@ -30,25 +30,25 @@
                 <!-- Task Header -->
                 <div class="task-header">
                     <h2 class="task-title">{{ task.title }}</h2>
-                    <div class="task-info">
-                        Articles: {{ task.articles|length }} | 
-                        Instruction: {{ "Yes" if task.instruction else "No" }}
-                    </div>
                 </div>
 
                 <!-- Task Summary -->
                 <div class="info-box">
-                    <div class="summary-item">
-                        <span class="summary-label">Task ID:</span>
-                        <span class="summary-value">{{ task.task_id }}</span>
-                    </div>
                     <div class="summary-item">
                         <span class="summary-label">Articles:</span>
                         <span class="summary-value">{{ task.articles|length }} files</span>
                     </div>
                     <div class="summary-item">
                         <span class="summary-label">Instruction:</span>
-                        <span class="summary-value">{{ task.instruction[:50] + "..." if task.instruction|length > 50 else task.instruction if task.instruction else "No instruction provided" }}</span>
+                        <span class="summary-value">
+                            {% if task.preset_instruction %}
+                                Preset: {{ task.preset_instruction.title() }}
+                            {% elif task.instruction %}
+                                {{ task.instruction[:50] + "..." if task.instruction|length > 50 else task.instruction }}
+                            {% else %}
+                                No instruction provided
+                            {% endif %}
+                        </span>
                     </div>
                 </div>
 
@@ -169,9 +169,9 @@
     </div>
 
     <!-- JavaScript for immediate processing feedback -->
+    {% if task.status == 'pending' or task.status == 'failed' %}
     <script>
         // Handle form submission with immediate feedback
-        {% if task.status == 'pending' or task.status == 'failed' %}
         document.getElementById('process-form').addEventListener('submit', function(e) {
             const button = document.getElementById('process-btn');
             const statusBadge = document.querySelector('.status-badge');
@@ -240,15 +240,17 @@
                 }
             }, 2000); // Change step every 2 seconds
         }
-        {% endif %}
+    </script>
+    {% endif %}
         
-        // Auto-refresh for processing status
-        {% if task.status == 'processing' %}
+    <!-- Auto-refresh for processing status -->
+    {% if task.status == 'processing' %}
+    <script>
         setTimeout(function() {
             window.location.reload();
         }, 5000); // Refresh every 5 seconds
-        {% endif %}
     </script>
+    {% endif %}
 </body>
 
 </html>

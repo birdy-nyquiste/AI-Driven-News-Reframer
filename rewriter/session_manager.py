@@ -42,6 +42,7 @@ class SessionManager:
                 "title": "",
                 "articles": [],
                 "instruction": "",
+                "preset_instruction": "",  # For preset instructions
             }
             session.modified = True
 
@@ -50,7 +51,7 @@ class SessionManager:
         """Get current task data from session."""
         return session.get(
             SessionManager.CURRENT_TASK_KEY,
-            {"title": "", "articles": [], "instruction": ""},
+            {"title": "", "articles": [], "instruction": "", "preset_instruction": ""},
         )
 
     @staticmethod
@@ -124,6 +125,26 @@ class SessionManager:
             session.modified = True
 
     @staticmethod
+    def set_preset_instruction(preset_name):
+        """Set the preset instruction for the current task."""
+        SessionManager.initialize_task()
+        session[SessionManager.CURRENT_TASK_KEY]["preset_instruction"] = preset_name
+        session.modified = True
+
+    @staticmethod
+    def get_preset_instruction():
+        """Get the preset instruction from the current task."""
+        task_data = SessionManager.get_task_data()
+        return task_data.get("preset_instruction", "")
+
+    @staticmethod
+    def clear_preset_instruction():
+        """Clear the preset instruction from the current task."""
+        if SessionManager.CURRENT_TASK_KEY in session:
+            session[SessionManager.CURRENT_TASK_KEY]["preset_instruction"] = ""
+            session.modified = True
+
+    @staticmethod
     def clear_current_task():
         """Clear the current task from session."""
         if SessionManager.CURRENT_TASK_KEY in session:
@@ -173,6 +194,7 @@ class SessionManager:
             "title": task_data.get("title", ""),
             "articles": task_data.get("articles", []),
             "instruction": task_data.get("instruction", ""),
+            "preset_instruction": task_data.get("preset_instruction", ""),
             "status": "pending",  # pending, processing, completed, failed
             "result": "",
             "created_at": str(uuid.uuid4()),  # Using uuid as timestamp placeholder

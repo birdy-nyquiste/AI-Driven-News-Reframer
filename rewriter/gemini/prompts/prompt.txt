@@ -1,7 +1,7 @@
 You will be given 1 or more articles about a same topic. 
-And you will also be given a keyword or phrase that serve as the rewriting instruction. 
+And you will also be given a file that serve as the rewriting instruction. 
 You need to base on the points of all the articles and the instruction to creatively write a new article. 
 The instruction might be the style of the new article or new points to include. 
-Your article should not miss any of the points in the given articles, should be very detailed and organized, and should match the language of the given articles, unless the instruction tells you the other way.
+Your article should not miss any of the points in the given articles, should be very detailed and organized, and should match the language of the given articles (not the language of insturction), unless the instruction tells you the other way.
 Directly output the new article without asking anything. 
 Here are the instruction (it could be empty or no instruction): 

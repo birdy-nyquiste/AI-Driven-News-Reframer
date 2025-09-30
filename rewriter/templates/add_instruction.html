@@ -29,35 +29,130 @@
 
                 <div class="section">
                     <h2 class="section-title">Rewriting Instructions</h2>
-                    <p class="section-description">Provide specific guidance on how you want the AI to rewrite your articles. Be as detailed as possible for better results.</p>
+                    <p class="section-description">Choose from preset instructions or provide your own custom guidance for how you want the AI to rewrite your articles.</p>
                     
-                    <div class="info-box">
-                        <h3>Tips for effective instructions:</h3>
-                        <ul>
-                            <li>Specify the tone and style you want (formal, casual, academic, etc.)</li>
-                            <li>Mention the target audience</li>
-                            <li>Include any specific requirements or constraints</li>
-                            <li>Describe the desired length or format</li>
-                        </ul>
-                    </div>
-
-                    <form action="{{ url_for('task.add_instruction') }}" method="POST">
-                        <div class="form-group">
-                            <textarea name="instruction_text" class="form-textarea" rows="8"
-                                placeholder="Enter your rewriting instructions here...">{{ current_instruction if current_instruction else '' }}</textarea>
-                        </div>
-
-                        <div class="action-buttons">
-                            <a href="{{ url_for('task.new_task') }}" class="btn btn-secondary">Back</a>
-                            <button type="submit" class="btn btn-primary">
-                                {% if current_instruction %}Update Instruction{% else %}Add Instruction{% endif %}
+                    <!-- Preset Instructions Section -->
+                    {% if presets %}
+                    <div class="preset-section">
+                        <h3 class="preset-title">Preset Instructions</h3>
+                        <p class="preset-description">Select one of our pre-configured instruction styles:</p>
+                        
+                        <div class="preset-buttons" id="presetButtons">
+                            {% for preset in presets %}
+                            <button type="button" class="preset-button" data-preset="{{ preset.name }}" 
+                                    {% if current_preset == preset.name %}selected{% endif %}>
+                                <div class="preset-button-title">{{ preset.title }}</div>
+                                <div class="preset-button-description">{{ preset.description }}</div>
                             </button>
+                            {% endfor %}
                         </div>
-                    </form>
+                    </div>
+                    {% endif %}
+
+                    <!-- Custom Instruction Section -->
+                    <div class="custom-section" id="customSection">
+                        <h3 class="custom-title">Custom Instructions</h3>
+                        <p class="custom-description">Or provide your own detailed instructions:</p>
+                        
+                        <div class="info-box">
+                            <h3>Tips for effective instructions:</h3>
+                            <ul>
+                                <li>Specify the tone and style you want (formal, casual, academic, etc.)</li>
+                                <li>Mention the target audience</li>
+                                <li>Include any specific requirements or constraints</li>
+                                <li>Describe the desired length or format</li>
+                            </ul>
+                        </div>
+
+                        <form action="{{ url_for('task.add_instruction') }}" method="POST" id="instructionForm">
+                            <input type="hidden" name="preset_selection" id="presetSelection" value="">
+                            
+                            <div class="form-group" id="textareaGroup">
+                                <textarea name="instruction_text" class="form-textarea" rows="8" id="instructionTextarea"
+                                    placeholder="Enter your rewriting instructions here...">{{ current_instruction if current_instruction else '' }}</textarea>
+                            </div>
+
+                            <div class="action-buttons">
+                                <a href="{{ url_for('task.new_task') }}" class="btn btn-secondary">Back</a>
+                                <button type="submit" class="btn btn-primary">
+                                    {% if current_instruction or current_preset %}Update Instruction{% else %}Add Instruction{% endif %}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const presetButtons = document.querySelectorAll('.preset-button');
+            const presetButtonsContainer = document.getElementById('presetButtons');
+            const presetSelection = document.getElementById('presetSelection');
+            const instructionTextarea = document.getElementById('instructionTextarea');
+            const textareaGroup = document.getElementById('textareaGroup');
+            
+            function updatePresetStates() {
+                const hasSelection = presetSelection.value !== '';
+                if (presetButtonsContainer) {
+                    presetButtonsContainer.classList.toggle('has-selection', hasSelection);
+                }
+                
+                // Update textarea state
+                instructionTextarea.disabled = hasSelection;
+                textareaGroup.classList.toggle('disabled', hasSelection);
+                
+                if (hasSelection) {
+                    instructionTextarea.value = '';  // Clear custom text when preset is selected
+                }
+            }
+            
+            // Initialize state based on current preset
+            const currentPreset = '{{ current_preset }}';
+            if (currentPreset) {
+                presetSelection.value = currentPreset;
+                updatePresetStates();
+            }
+            
+            presetButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const presetName = this.getAttribute('data-preset');
+                    
+                    // Remove selected state from all buttons
+                    presetButtons.forEach(btn => {
+                        btn.classList.remove('selected');
+                        btn.removeAttribute('selected');
+                    });
+                    
+                    // Check if clicking the already selected preset (deselect)
+                    if (presetSelection.value === presetName) {
+                        // Deselect preset
+                        presetSelection.value = '';
+                    } else {
+                        // Select this preset
+                        this.classList.add('selected');
+                        this.setAttribute('selected', 'selected');
+                        presetSelection.value = presetName;
+                    }
+                    
+                    updatePresetStates();
+                });
+            });
+            
+            // Clear preset selection if user starts typing
+            instructionTextarea.addEventListener('input', function() {
+                if (this.value.trim() && presetSelection.value) {
+                    presetSelection.value = '';
+                    presetButtons.forEach(btn => {
+                        btn.classList.remove('selected');
+                        btn.removeAttribute('selected');
+                    });
+                    updatePresetStates();
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

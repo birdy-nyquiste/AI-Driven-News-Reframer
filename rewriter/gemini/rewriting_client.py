@@ -60,8 +60,25 @@ class RewritingClient:
                 print(f"Warning: Could not load article from {file_path}: {str(e)}")
         return articles
 
-    def load_instruction(self, instruction_file_path: str) -> str:
-        """Load instruction content from file."""
+    def load_instruction(
+        self, instruction_file_path: str, preset_id: str = None
+    ) -> str:
+        """Load instruction content from file or preset."""
+        # If preset_id is provided, load preset content instead
+        if preset_id:
+            try:
+                preset_file_path = os.path.join(
+                    os.path.dirname(__file__), "prompts", f"preset_{preset_id}.txt"
+                )
+                if os.path.exists(preset_file_path):
+                    with open(preset_file_path, "r", encoding="utf-8") as f:
+                        return f.read().strip()
+                else:
+                    print(f"Warning: Preset file not found: {preset_file_path}")
+            except Exception as e:
+                print(f"Warning: Error loading preset {preset_id}: {str(e)}")
+
+        # Fall back to regular instruction file
         try:
             with open(instruction_file_path, "r", encoding="utf-8") as f:
                 return f.read().strip()
@@ -100,13 +117,16 @@ class RewritingClient:
 
         return content_parts
 
-    def process_task(self, user_folder: str, prompt_file_path: str) -> str:
+    def process_task(
+        self, user_folder: str, prompt_file_path: str, preset_id: str = None
+    ) -> str:
         """
         Process a rewriting task with articles, instruction, and prompt.
 
         Args:
             user_folder: Path to user's folder containing articles and instruction
             prompt_file_path: Path to the prompt template file
+            preset_id: Optional preset ID to use instead of instruction file
 
         Returns:
             Generated rewritten content
@@ -129,9 +149,9 @@ class RewritingClient:
             if not articles:
                 raise Exception("No articles found to process")
 
-            # Load instruction
+            # Load instruction (preset or custom)
             instruction_file = os.path.join(user_folder, "instruction.txt")
-            instruction = self.load_instruction(instruction_file)
+            instruction = self.load_instruction(instruction_file, preset_id)
 
             # Build content parts (text + PDF files)
             content_parts = self._build_content_parts(

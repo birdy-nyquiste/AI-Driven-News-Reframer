@@ -15,6 +15,8 @@ from .util import (
     remove_article_with_cleanup,
     save_instruction_file,
     delete_instruction_file,
+    get_preset_instructions,
+    get_preset_content,
 )
 
 bp = Blueprint("task", __name__, url_prefix="/task")
@@ -39,14 +41,27 @@ def new_task():
                 flash("Please enter a title.", "error")
 
         elif action == "add_article":
+            # Save title if provided before redirecting
+            title = request.form.get("title", "").strip()
+            if title:
+                SessionManager.set_task_title(title)
             # Redirect to add article page
             return redirect(url_for("task.add_article"))
 
         elif action == "add_instruction":
-            # Redirect to add instruction page (to be implemented)
+            # Save title if provided before redirecting
+            title = request.form.get("title", "").strip()
+            if title:
+                SessionManager.set_task_title(title)
+            # Redirect to add instruction page
             return redirect(url_for("task.add_instruction"))
 
         elif action == "create_task":
+            # Save title before creating task
+            title = request.form.get("title", "").strip()
+            if title:
+                SessionManager.set_task_title(title)
+
             # Create the final task
             if SessionManager.is_task_ready():
                 # Save task and get task_id
@@ -148,58 +163,76 @@ def add_instruction():
     SessionManager.initialize_task()
 
     if request.method == "POST":
+        # Check if a preset was selected
+        selected_preset = request.form.get("preset_selection", "").strip()
         instruction_text = request.form.get("instruction_text", "").strip()
 
         # Check if this was an edit or new instruction
         current_instruction = SessionManager.get_instruction()
-        was_editing = bool(current_instruction)
+        current_preset = SessionManager.get_preset_instruction()
+        was_editing = bool(current_instruction or current_preset)
 
         # Get user folder for file operations
         user_folder = get_user_folder()
 
-        # Save instruction to file
-        if instruction_text:
+        if selected_preset:
+            # Handle preset selection - just store the preset ID
+            # Verify preset exists
+            preset_content = get_preset_content(selected_preset)
+            if preset_content:
+                # Delete any existing custom instruction file
+                delete_instruction_file(user_folder)
+
+                # Clear regular instruction and set preset
+                SessionManager.set_instruction("")
+                SessionManager.set_preset_instruction(selected_preset)
+
+                flash("Preset instruction applied successfully!", "success")
+            else:
+                flash("Error: Preset not found.", "error")
+        elif instruction_text:
+            # Handle custom instruction
             file_path, error_message = save_instruction_file(
                 instruction_text, user_folder
             )
             if error_message:
                 flash(error_message, "error")
                 return render_template(
-                    "add_instruction.html", current_instruction=current_instruction
+                    "add_instruction.html",
+                    current_instruction=current_instruction,
+                    current_preset=current_preset,
+                    presets=get_preset_instructions(),
                 )
+
+            # Clear preset and set custom instruction
+            SessionManager.clear_preset_instruction()
+            SessionManager.set_instruction(instruction_text)
+
+            message = (
+                "Instruction updated successfully!"
+                if was_editing
+                else "Instruction added successfully!"
+            )
+            flash(message, "success")
         else:
-            # If instruction is empty, delete the file
+            # If both instruction and preset are empty, delete the file
             delete_instruction_file(user_folder)
+            SessionManager.set_instruction("")
+            SessionManager.clear_preset_instruction()
 
-        # Set instruction in session (overwrites existing)
-        SessionManager.set_instruction(instruction_text)
-
-        message = (
-            "Instruction updated successfully!"
-            if was_editing
-            else "Instruction added successfully!"
-        )
-        flash(message, "success")
         return redirect(url_for("task.new_task"))
 
     # GET request - show form with current instruction if exists
     current_instruction = SessionManager.get_instruction()
+    current_preset = SessionManager.get_preset_instruction()
+    presets = get_preset_instructions()
+
     return render_template(
-        "add_instruction.html", current_instruction=current_instruction
+        "add_instruction.html",
+        current_instruction=current_instruction,
+        current_preset=current_preset,
+        presets=presets,
     )
-
-
-@bp.route("/delete_instruction")
-def delete_instruction():
-    """Delete the instruction from the current task."""
-    # Get user folder and delete the instruction file
-    user_folder = get_user_folder()
-    delete_instruction_file(user_folder)
-
-    # Remove from session
-    SessionManager.delete_instruction()
-    flash("Instruction deleted successfully!", "success")
-    return redirect(url_for("task.new_task"))
 
 
 @bp.route("/<task_id>")
@@ -236,14 +269,17 @@ def process_task(task_id):
         # Import and use Gemini client
         from .gemini.rewriting_client import RewritingClient
 
-        # Get prompt file path
+        # Always use the default prompt template file
         prompt_file_path = os.path.join(
-            os.path.dirname(__file__), "gemini", "prompt.txt"
+            os.path.dirname(__file__), "gemini", "prompts", "prompt.txt"
         )
+
+        # Get preset ID if task uses preset instruction
+        preset_id = task.get("preset_instruction", "")
 
         # Initialize client and process
         client = RewritingClient()
-        result = client.process_task(user_folder, prompt_file_path)
+        result = client.process_task(user_folder, prompt_file_path, preset_id or None)
 
         # Update status to completed with result
         SessionManager.update_task_status(task_id, user_folder, "completed", result)

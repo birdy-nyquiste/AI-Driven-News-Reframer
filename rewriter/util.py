@@ -140,3 +140,97 @@ def delete_instruction_file(user_folder):
     except OSError:
         pass  # File might not exist or already deleted
     return False
+
+
+def get_preset_instructions():
+    """Get available preset instructions from the prompts folder."""
+    prompts_folder = os.path.join(os.path.dirname(__file__), "gemini", "prompts")
+    presets = []
+
+    if os.path.exists(prompts_folder):
+        for filename in os.listdir(prompts_folder):
+            if filename.startswith("preset_") and filename.endswith(".txt"):
+                preset_name = filename[
+                    7:-4
+                ]  # Remove "preset_" prefix and ".txt" suffix
+                preset_file = os.path.join(prompts_folder, filename)
+
+                try:
+                    with open(preset_file, "r", encoding="utf-8") as f:
+                        content = f.read().strip()
+
+                        # Define custom titles and descriptions for each preset
+                        preset_info = {
+                            "news": {
+                                "title": "News/Journalism Style",
+                                "description": "Professional news writing with objective reporting, inverted pyramid structure, and journalistic standards",
+                            },
+                            "academic": {
+                                "title": "Academic Writing Style",
+                                "description": "Formal scholarly tone with citations, complex structure, and analytical approach",
+                            },
+                            "casual": {
+                                "title": "Casual/Conversational Style",
+                                "description": "Friendly, approachable writing with simple language and personal tone",
+                            },
+                            "pro_trump": {
+                                "title": "Pro-Trump Perspective",
+                                "description": "Supportive viewpoint emphasizing achievements, strength themes, and America First messaging",
+                            },
+                            "con_trump": {
+                                "title": "Anti-Trump Perspective",
+                                "description": "Critical viewpoint focusing on accountability, democratic concerns, and institutional impacts",
+                            },
+                        }
+
+                        # Get preset-specific info or use defaults
+                        info = preset_info.get(
+                            preset_name,
+                            {
+                                "title": f"Preset {preset_name.replace('_', ' ').title()}",
+                                "description": f"Rewriting style preset {preset_name}",
+                            },
+                        )
+
+                        presets.append(
+                            {
+                                "name": preset_name,
+                                "filename": filename,
+                                "title": info["title"],
+                                "description": info["description"],
+                                "content": content,
+                            }
+                        )
+                except Exception as e:
+                    print(f"Error reading preset {filename}: {str(e)}")
+
+    # Define the desired display order
+    preset_order = ["news", "academic", "casual", "pro_trump", "con_trump"]
+
+    # Sort presets according to the defined order
+    def sort_key(preset):
+        try:
+            return preset_order.index(preset["name"])
+        except ValueError:
+            # If preset not in order list, put it at the end
+            return len(preset_order)
+
+    presets.sort(key=sort_key)
+
+    return presets
+
+
+def get_preset_content(preset_name):
+    """Get the content of a specific preset instruction."""
+    preset_file = os.path.join(
+        os.path.dirname(__file__), "gemini", "prompts", f"preset_{preset_name}.txt"
+    )
+
+    try:
+        if os.path.exists(preset_file):
+            with open(preset_file, "r", encoding="utf-8") as f:
+                return f.read().strip()
+    except Exception as e:
+        print(f"Error reading preset {preset_name}: {str(e)}")
+
+    return ""
