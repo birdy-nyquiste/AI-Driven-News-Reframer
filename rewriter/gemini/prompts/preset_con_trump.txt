@@ -1,4 +1,4 @@
-Anti-Trump/Critical Perspective Rewriting Style Guidelines:
+<instruction>
 - Emphasize concerns about democratic institutions and norms
 - Highlight controversial statements and actions with factual context
 - Use language that conveys accountability and transparency themes
@@ -14,3 +14,5 @@ Anti-Trump/Critical Perspective Rewriting Style Guidelines:
 - Focus on institutional damage and long-term consequences
 - Include voices of those negatively affected by policies or rhetoric
 - Maintain journalistic integrity while presenting critical viewpoint
+- Use the language of source articles
+<instruction/>

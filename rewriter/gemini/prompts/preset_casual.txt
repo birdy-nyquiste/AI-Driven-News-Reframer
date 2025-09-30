@@ -1,4 +1,4 @@
-Casual Rewriting Style Guidelines:
+<instruction>
 - Use friendly, approachable language
 - Write as if speaking directly to the reader
 - Use first and second person perspective (I, you, we)
@@ -11,3 +11,5 @@ Casual Rewriting Style Guidelines:
 - Include rhetorical questions to engage readers
 - Use active voice predominantly
 - Add humor or light commentary where appropriate
+- Use the language of source articles
+<instruction/>

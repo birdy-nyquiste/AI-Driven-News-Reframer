@@ -1,4 +1,4 @@
-News/Journalism Rewriting Style Guidelines:
+<instruction>
 - Start with a compelling headline and lead paragraph
 - Follow the inverted pyramid structure (most important info first)
 - Use clear, concise language that's accessible to all readers
@@ -12,3 +12,5 @@ News/Journalism Rewriting Style Guidelines:
 - Include who, what, when, where, why, and how
 - Fact-check all information and provide sources
 - Use present tense for recent events, past tense for completed actions
+- Use the language of source articles
+<instruction/>

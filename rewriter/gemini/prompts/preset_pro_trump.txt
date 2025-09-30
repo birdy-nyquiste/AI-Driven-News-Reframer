@@ -1,4 +1,4 @@
-Pro-Trump/Supportive Perspective Rewriting Style Guidelines:
+<instruction>
 - Emphasize achievements, policy successes, and positive economic impacts
 - Use language that conveys strength, leadership, and decisive action
 - Highlight support from base voters, endorsements, and rally attendance
@@ -15,3 +15,5 @@ Pro-Trump/Supportive Perspective Rewriting Style Guidelines:
 - Include voices of supporters and those who benefited from policies
 - Frame opposition as part of "deep state" or establishment resistance
 - Maintain enthusiasm and energy in tone while staying factual
+- Use the language of source articles
+<instruction/>

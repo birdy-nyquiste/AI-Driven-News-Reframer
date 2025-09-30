@@ -1,6 +1,5 @@
-Academic Rewriting Style Guidelines:
+<instruction>
 - Use formal, scholarly language and tone
-- Include proper citations and references where appropriate
 - Structure the content with clear headings and subheadings
 - Present arguments logically with supporting evidence
 - Use third-person perspective
@@ -9,3 +8,5 @@ Academic Rewriting Style Guidelines:
 - Write in an objective, analytical manner
 - Use complex sentence structures and advanced vocabulary
 - Maintain a neutral, unbiased tone
+- Use the language of source articles
+<instruction/>
