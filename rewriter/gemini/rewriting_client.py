@@ -15,7 +15,8 @@ class RewritingClient:
     """Client for interacting with Google Gemini AI for article rewriting."""
 
     def __init__(self):
-        self.client = genai.Client()
+        api_key = os.getenv("GEMINI_API_KEY")
+        self.client = genai.Client(api_key=api_key)
 
     def load_prompt_template(self, prompt_file_path: str) -> str:
         """Load the prompt template from file."""
