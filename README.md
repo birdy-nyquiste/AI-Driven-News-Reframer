@@ -12,12 +12,7 @@ An automated solution for customized news article reframing and rewriting, drive
 auto-rewriter/
 ├── docs/                           # Documentation
 │   └── AI-Driven News Reframer Design.md
-├── instance/                       # Instance-specific files
-│   └── uploads/                    # File uploads directory
-│       └── [session-id]/           # Session-specific uploads
-│           ├── input1.txt          # Uploaded text files
-│           ├── input2.pdf          # Uploaded PDF files
-│           └── tasks.json          # Task configuration
+├── instance                        # Instance-specific files
 ├── rewriter/                       # Main application package
 │   ├── __init__.py                 # Flask app factory
 │   ├── session_manager.py          # Session management
@@ -25,23 +20,10 @@ auto-rewriter/
 │   ├── util.py                     # Utility functions
 │   ├── gemini/                     # Google Gemini integration
 │   │   ├── rewriting_client.py     # Gemini API client
-│   │   └── prompts/                # AI prompt templates
-│   │       ├── prompt.txt          # Main prompt template
-│   │       ├── preset_academic.txt # Academic writing style
-│   │       ├── preset_casual.txt   # Casual writing style
-│   │       ├── preset_con_trump.txt # Conservative Trump perspective
-│   │       ├── preset_news.txt    # News article style
-│   │       └── preset_pro_trump.txt # Pro-Trump perspective
-│   ├── static/                     # Static assets
-│   │   └── style.css               # Application styles
-│   └── templates/                  # HTML templates
-│       ├── index.html              # Welcome page
-│       ├── new_task.html           # Task creation
-│       ├── add_article.html        # Article input
-│       ├── add_instruction.html    # Instruction input
-│       └── view_task.html          # Task results
+│   │   └── prompts                 # AI prompt templates
+│   ├── static                      # Static assets
+│   └── templates                  # HTML templates
 ├── requirements.txt                # Python dependencies
-├── render.yaml                     # Render deployment configuration
 └── README.md                       # This file
 ```
 ## Access
