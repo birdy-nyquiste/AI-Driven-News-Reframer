@@ -6,7 +6,6 @@ Processes multiple articles and instructions to generate new content.
 import os
 import pathlib
 from google import genai
-from google.genai import types
 from google.genai.errors import APIError
 from typing import List, Optional, Union
 
