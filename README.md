@@ -2,9 +2,8 @@
 
 An automated solution for customized news article reframing and rewriting, driven by AI technology.
 
-## Python Version
-
-**Python 3.10.18**
+## Access
+https://ai-driven-news-reframer.onrender.com
 
 ## Project Directory Structure
 
@@ -26,13 +25,11 @@ auto-rewriter/
 ├── requirements.txt                # Python dependencies
 └── README.md                       # This file
 ```
-## Access
-https://ai-driven-news-reframer.onrender.com
-
-
 ## How to Run Locally
 
 ### 1. Install Dependencies
+
+#### Python Version: 3.10.18
 
 Install the required Python packages using pip:
 
