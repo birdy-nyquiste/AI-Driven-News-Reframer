@@ -3,16 +3,16 @@
 An automated solution for customized news article reframing and rewriting, driven by AI technology.
 
 ## Access
-https://ai-driven-news-reframer.onrender.com
+TBD
 
 ## Project Directory Structure
 
 ```
-auto-rewriter/
+AI-Driven-News-Reframer/
 ├── docs/                           # Documentation
 │   └── AI-Driven News Reframer Design.md
 ├── instance                        # Instance-specific files
-├── rewriter/                       # Main application package
+├── reframer/                       # Main application package
 │   ├── __init__.py                 # Flask app factory
 │   ├── session_manager.py          # Session management
 │   ├── task.py                     # Task handling blueprint
