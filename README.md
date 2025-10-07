@@ -3,7 +3,7 @@
 An automated solution for customized news article reframing and rewriting, driven by AI technology.
 
 ## Access
-TBD
+https://ai-driven-news-reframer-6jr8.onrender.com
 
 ## Project Directory Structure
 
